@@ -1,13 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../domain/repositories/quran_repository.dart';
 import '../bloc/surah_detail_bloc.dart';
+import '../bloc/surah_detail_event.dart';
+import '../bloc/surah_detail_state.dart';
 
+/// Simple detail page that lists all verses of a given Surah.
+/// Receives the repo instance for simplicity (you can switch to DI later).
 class SurahDetailPage extends StatelessWidget {
   final int surah;
   final String titleAr;
   final QuranRepository repo;
-  const SurahDetailPage({super.key, required this.surah, required this.titleAr, required this.repo});
+
+  const SurahDetailPage({
+    super.key,
+    required this.surah,
+    required this.titleAr,
+    required this.repo,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +28,13 @@ class SurahDetailPage extends StatelessWidget {
         appBar: AppBar(title: Text(titleAr, textDirection: TextDirection.rtl)),
         body: BlocBuilder<SurahDetailBloc, SurahDetailState>(
           builder: (context, state) {
-            if (state.isLoading) return const Center(child: CircularProgressIndicator());
-            if (state.error != null) return Center(child: Text(state.error!));
+            if (state.isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (state.error != null) {
+              return Center(child: Text(state.error!));
+            }
+
             final ayat = state.data!;
             return ListView.builder(
               padding: const EdgeInsets.all(16),
@@ -30,13 +46,18 @@ class SurahDetailPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
+                      // Arabic text (RTL)
                       Text(
                         '${a.textAr} ﴿${a.numberInSurah}﴾',
                         textDirection: TextDirection.rtl,
                         style: const TextStyle(fontSize: 24, height: 2),
                       ),
+                      // If a Turkish translation exists, render it below (LTR)
                       if (a.textTr != null && a.textTr!.isNotEmpty)
-                        Text(a.textTr!, textDirection: TextDirection.ltr),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 6),
+                          child: Text(a.textTr!, textDirection: TextDirection.ltr),
+                        ),
                     ],
                   ),
                 );

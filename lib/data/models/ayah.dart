@@ -3,21 +3,35 @@ import '../../domain/entities/ayah.dart';
 
 part 'ayah.g.dart';
 
+/// Hive-persisted Ayah model.
+/// Note: Hive has no query engine/relations; we filter in code.
 @HiveType(typeId: 2)
 class AyahHive extends HiveObject {
-  @HiveField(0) late int surah;          // sure no
-  @HiveField(1) late int numberInSurah;  // ayet no (sure içi)
-  @HiveField(2) late String textAr;      // Arapça metin
-  @HiveField(3) String? textTr;          // meal (opsiyonel)
-  @HiveField(4) String? textEn;          // meal (opsiyonel)
-  @HiveField(5) late int juz;            // cüz no
+  @HiveField(0)
+  late int surah;          // Surah number
 
+  @HiveField(1)
+  late int numberInSurah;  // Verse index inside the surah
+
+  @HiveField(2)
+  late String textAr;      // Arabic
+
+  @HiveField(3)
+  String? textTr;          // Optional Turkish translation
+
+  @HiveField(4)
+  String? textEn;          // Optional English translation
+
+  @HiveField(5)
+  late int juz;            // Juz number
+
+  /// Convert to domain entity.
   Ayah toEntity() => Ayah(
-    surah: surah,
-    numberInSurah: numberInSurah,
-    textAr: textAr,
-    textTr: textTr,
-    textEn: textEn,
-    juz: juz,
-  );
+        surah: surah,
+        numberInSurah: numberInSurah,
+        textAr: textAr,
+        textTr: textTr,
+        textEn: textEn,
+        juz: juz,
+      );
 }

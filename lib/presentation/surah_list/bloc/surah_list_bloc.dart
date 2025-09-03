@@ -1,18 +1,21 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../domain/entities/surah.dart';
 import '../../../domain/repositories/quran_repository.dart';
+import 'surah_list_event.dart';
+import 'surah_list_state.dart';
 
-part 'surah_list_event.dart';
-part 'surah_list_state.dart';
-
+/// BLoC that handles the flow for the Surah list page.
 class SurahListBloc extends Bloc<SurahListEvent, SurahListState> {
   final QuranRepository repo;
+
   SurahListBloc(this.repo) : super(const SurahListState.loading()) {
+    // Load data on SurahListRequested
     on<SurahListRequested>((event, emit) async {
       emit(const SurahListState.loading());
       try {
-        await repo.seedFromAssetIfEmpty();   // ilk açılışta veriyi yükle
+        // Seed local DB from assets on first launch
+        await repo.seedFromAssetIfEmpty();
+
+        // Fetch and emit Surah list
         final list = await repo.getSurahList();
         emit(SurahListState.loaded(list));
       } catch (e) {
