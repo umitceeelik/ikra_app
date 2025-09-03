@@ -1,36 +1,23 @@
 import '../../domain/entities/ayah.dart';
-import '../../domain/entities/reading_progress.dart';
 import '../../domain/entities/surah.dart';
+import '../../domain/entities/reading_progress.dart';
+import '../../domain/entities/bookmark.dart';
 import '../../domain/repositories/quran_repository.dart';
 import '../datasources/quran_asset_ds.dart';
 import '../datasources/quran_local_ds.dart';
 import '../models/ayah.dart';
 import '../models/surah.dart';
 
-/// Concrete repository implementation.
-/// For now: Asset JSON -> Hive (seed) + offline reads.
-/// Later: you can add a Remote API and keep this interface unchanged.
 class QuranRepositoryImpl implements QuranRepository {
   final QuranLocalDataSource local;
   final QuranAssetDataSource asset;
 
-  QuranRepositoryImpl({
-    required this.local,
-    required this.asset,
-  });
+  QuranRepositoryImpl({required this.local, required this.asset});
 
   @override
   Future<void> seedFromAssetIfEmpty() async {
-    // Skip if already seeded
     if (!local.isEmpty()) return;
-
-    // Load JSON from assets
     final map = await asset.loadJson();
-
-    // JSON shape:
-    // { "surahs": [ { surahNumber, surahNameArabic, surahNameTurkish, surahNameEnglish,
-    //                 verses: [ { verseNumber, text, textTurkish, textEnglish, juzNumber }, ... ]
-    //               }, ... ] }
     final surahsRaw = (map['surahs'] as List).cast<Map<String, dynamic>>();
 
     final surahModels = <SurahHive>[];
@@ -43,29 +30,28 @@ class QuranRepositoryImpl implements QuranRepository {
       final nameEn = (s['surahNameEnglish'] as String?) ?? '';
       final verses = (s['verses'] as List).cast<Map<String, dynamic>>();
 
-      // Build Surah model
-      final surah = SurahHive()
-        ..number = number
-        ..nameAr = nameAr
-        ..nameTr = nameTr
-        ..nameEn = nameEn
-        ..ayahCount = verses.length;
-      surahModels.add(surah);
+      surahModels.add(
+        SurahHive()
+          ..number = number
+          ..nameAr = nameAr
+          ..nameTr = nameTr
+          ..nameEn = nameEn
+          ..ayahCount = verses.length,
+      );
 
-      // Build Ayah models
       for (final v in verses) {
-        final a = AyahHive()
-          ..surah = number
-          ..numberInSurah = v['verseNumber'] as int
-          ..textAr = (v['text'] as String?) ?? ''
-          ..textTr = v['textTurkish'] as String?
-          ..textEn = v['textEnglish'] as String?
-          ..juz = (v['juzNumber'] as int?) ?? 1;
-        ayahModels.add(a);
+        ayahModels.add(
+          AyahHive()
+            ..surah = number
+            ..numberInSurah = v['verseNumber'] as int
+            ..textAr = (v['text'] as String?) ?? ''
+            ..textTr = v['textTurkish'] as String?
+            ..textEn = v['textEnglish'] as String?
+            ..juz = (v['juzNumber'] as int?) ?? 1,
+        );
       }
     }
 
-    // Persist everything in one go
     await local.writeAll(surahs: surahModels, ayahs: ayahModels);
   }
 
@@ -75,11 +61,21 @@ class QuranRepositoryImpl implements QuranRepository {
   @override
   Future<List<Ayah>> getSurahAyah(int surah) async => local.getAyatBySurah(surah);
 
-    @override
+  // Reading progress
+  @override
   Future<void> updateReadingProgress(int surah, int ayah) =>
       local.setReadingProgress(ReadingProgress(surah: surah, ayah: ayah));
 
   @override
-  Future<ReadingProgress?> getReadingProgress() async =>
-      local.getReadingProgress();
+  Future<ReadingProgress?> getReadingProgress() async => local.getReadingProgress();
+
+  // Bookmarks
+  @override
+  Future<List<Bookmark>> getBookmarks() async => local.getBookmarks();
+
+  @override
+  Future<void> toggleBookmark(int surah, int ayah) => local.toggleBookmark(surah, ayah);
+
+  @override
+  Future<bool> isBookmarked(int surah, int ayah) async => local.isBookmarked(surah, ayah);
 }

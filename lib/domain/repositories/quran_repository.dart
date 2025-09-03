@@ -1,4 +1,5 @@
 import '../entities/ayah.dart';
+import '../entities/bookmark.dart';
 import '../entities/reading_progress.dart';
 import '../entities/surah.dart';
 
@@ -19,4 +20,9 @@ abstract class QuranRepository {
 
   /// Retrieve the user's last reading position (if any).
   Future<ReadingProgress?> getReadingProgress();
+
+  // Bookmarks
+  Future<List<Bookmark>> getBookmarks();
+  Future<void> toggleBookmark(int surah, int ayah);
+  Future<bool> isBookmarked(int surah, int ayah);
 }

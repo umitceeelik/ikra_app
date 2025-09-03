@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'presentation/home/view/home_page.dart';
+import 'presentation/root/view/root_shell.dart';
 
-/// App entry point.
-/// Now starts on the Home page.
+/// App entry point: now uses a bottom-navigation shell.
 void main() {
   runApp(const IkraApp());
 }
@@ -16,7 +15,7 @@ class IkraApp extends StatelessWidget {
       title: 'ikra',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(useMaterial3: true),
-      home: const HomePage(),
+      home: const RootShell(),
     );
   }
 }
