@@ -6,9 +6,9 @@ import '../bloc/surah_detail_bloc.dart';
 import '../bloc/surah_detail_event.dart';
 import '../bloc/surah_detail_state.dart';
 
-/// Simple detail page that lists all verses of a given Surah.
-/// Receives the repo instance for simplicity (you can switch to DI later).
-class SurahDetailPage extends StatelessWidget {
+/// Detail page for a given Surah.
+/// On first frame, we store a simple reading progress (Surah, Ayah 1).
+class SurahDetailPage extends StatefulWidget {
   final int surah;
   final String titleAr;
   final QuranRepository repo;
@@ -21,11 +21,25 @@ class SurahDetailPage extends StatelessWidget {
   });
 
   @override
+  State<SurahDetailPage> createState() => _SurahDetailPageState();
+}
+
+class _SurahDetailPageState extends State<SurahDetailPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Post-frame callback ensures this runs once after the first build.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.repo.updateReadingProgress(widget.surah, 1);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => SurahDetailBloc(repo)..add(SurahDetailRequested(surah)),
+      create: (_) => SurahDetailBloc(widget.repo)..add(SurahDetailRequested(widget.surah)),
       child: Scaffold(
-        appBar: AppBar(title: Text(titleAr, textDirection: TextDirection.rtl)),
+        appBar: AppBar(title: Text(widget.titleAr, textDirection: TextDirection.rtl)),
         body: BlocBuilder<SurahDetailBloc, SurahDetailState>(
           builder: (context, state) {
             if (state.isLoading) {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'presentation/surah_list/view/surah_list_page.dart';
+import 'presentation/home/view/home_page.dart';
 
 /// App entry point.
-/// For now: Surah List -> Surah Detail navigation flow.
+/// Now starts on the Home page.
 void main() {
   runApp(const IkraApp());
 }
@@ -13,10 +13,10 @@ class IkraApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'ikra',                     // App name
+      title: 'ikra',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(useMaterial3: true),
-      home: const SurahListPage(),
+      home: const HomePage(),
     );
   }
 }

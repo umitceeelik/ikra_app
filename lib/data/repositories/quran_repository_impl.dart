@@ -1,4 +1,5 @@
 import '../../domain/entities/ayah.dart';
+import '../../domain/entities/reading_progress.dart';
 import '../../domain/entities/surah.dart';
 import '../../domain/repositories/quran_repository.dart';
 import '../datasources/quran_asset_ds.dart';
@@ -73,4 +74,12 @@ class QuranRepositoryImpl implements QuranRepository {
 
   @override
   Future<List<Ayah>> getSurahAyah(int surah) async => local.getAyatBySurah(surah);
+
+    @override
+  Future<void> updateReadingProgress(int surah, int ayah) =>
+      local.setReadingProgress(ReadingProgress(surah: surah, ayah: ayah));
+
+  @override
+  Future<ReadingProgress?> getReadingProgress() async =>
+      local.getReadingProgress();
 }

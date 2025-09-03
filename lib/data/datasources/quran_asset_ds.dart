@@ -6,7 +6,7 @@ import 'package:flutter/services.dart' show rootBundle;
 class QuranAssetDataSource {
   Future<Map<String, dynamic>> loadJson() async {
     // Path must match the entry in pubspec.yaml -> flutter.assets
-    final raw = await rootBundle.loadString('assets/quran/quran_combined_updated.json');
+    final raw = await rootBundle.loadString('assets/quran/quran.json');
     return jsonDecode(raw) as Map<String, dynamic>;
   }
 }

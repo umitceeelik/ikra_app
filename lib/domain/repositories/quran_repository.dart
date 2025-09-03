@@ -1,4 +1,5 @@
 import '../entities/ayah.dart';
+import '../entities/reading_progress.dart';
 import '../entities/surah.dart';
 
 /// Repository contract that the presentation layer depends on.
@@ -12,4 +13,10 @@ abstract class QuranRepository {
 
   /// Get all verses (Ayah) of a given Surah (offline).
   Future<List<Ayah>> getSurahAyah(int surah);
+
+  /// Persist the user's last reading position.
+  Future<void> updateReadingProgress(int surah, int ayah);
+
+  /// Retrieve the user's last reading position (if any).
+  Future<ReadingProgress?> getReadingProgress();
 }
