@@ -11,7 +11,7 @@ dependencies:
     sdk: flutter
 
   # State management
-  flutter_bloc: ^8.1.4
+  flutter_bloc: ^9.1.1
   equatable: ^2.0.5
 
   # Local database
@@ -20,6 +20,9 @@ dependencies:
 
   # (Optional) JSON helpers for future online API integrations
   json_annotation: ^4.9.0
+
+  geolocator:
+  adhan_dart:
 
 dev_dependencies:
   flutter_test:
@@ -34,3 +37,15 @@ flutter:
   # Put your JSON file here: assets/quran/quran.json
   assets:
     - assets/quran/quran.json
+
+  fonts:
+    - family: AmiriQuran
+      fonts:
+        - asset: assets/fonts/amiri/AmiriQuran-Regular.ttf
+          weight: 400
+
+    - family: KFGQPCUthmanicHafs
+      fonts:
+        - asset: assets/fonts/kfgqpc/KFGQPCUthmanicHafs-Regular.otf
+          weight: 400
+

@@ -10,6 +10,10 @@ import '../../surah_detail/view/surah_detail_page.dart';
 import '../bloc/home_bloc.dart';
 import '../bloc/home_event.dart';
 import '../bloc/home_state.dart';
+import '../../../core/app_theme.dart';
+import '../../settings/view/settings_page.dart';
+import '../../settings/bloc/theme_cubit.dart';
+import '../../prayer/view/prayer_page.dart';
 
 /// Simple Home screen with:
 /// - Continue Reading card (if progress exists)
@@ -35,8 +39,22 @@ class HomePage extends StatelessWidget {
         return BlocProvider(
           create: (_) => HomeBloc(repo)..add(HomeRequested()),
           child: Scaffold(
+            // inside build -> return BlocProvider(...):
             appBar: AppBar(
-              title: const Text('Ikra Home'),
+              title: const Text('Ikra'),
+              centerTitle: true,
+              actions: [
+                IconButton(
+                  tooltip: 'Ayarlar',
+                  icon: const Icon(Icons.settings),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const SettingsPage()),
+                    );
+                  },
+                ),
+              ],
             ),
             body: BlocBuilder<HomeBloc, HomeState>(
               builder: (context, state) {
@@ -89,7 +107,15 @@ class HomePage extends StatelessWidget {
                     const SizedBox(height: 16),
 
                     // Prayer Times placeholder
-                    _PrayerTimesPlaceholder(),
+                    InkWell(
+                      child: _PrayerTimesPlaceholder(),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const PrayerPage()),
+                        );
+                      },
+                    ),
 
                     const SizedBox(height: 16),
 
@@ -203,7 +229,10 @@ class _VerseOfTheDayCard extends StatelessWidget {
             Text(
               '$arabic ﴿$ayah﴾',
               textDirection: TextDirection.rtl,
-              style: const TextStyle(fontSize: 22, height: 2),
+              style: AppTheme.arabic(
+                fontFamily:
+                    context.read<ThemeCubit>().state.settings.arabicFontFamily,
+              ),
             ),
             const SizedBox(height: 8),
             Align(

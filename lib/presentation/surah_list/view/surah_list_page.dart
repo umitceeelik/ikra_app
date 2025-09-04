@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../core/app_theme.dart';
+import '../../settings/bloc/theme_cubit.dart';
 
 import '../../../data/datasources/quran_asset_ds.dart';
 import '../../../data/datasources/quran_local_ds.dart';
@@ -59,9 +61,17 @@ class SurahListPage extends StatelessWidget {
                       title: Text(
                         s.nameAr,
                         textDirection: TextDirection.rtl,
-                        style: const TextStyle(fontSize: 20),
+                        // Use Arabic reading style with the selected font from settings
+                        style: AppTheme.arabic(
+                          fontFamily: context
+                              .read<ThemeCubit>()
+                              .state
+                              .settings
+                              .arabicFontFamily,
+                        ).copyWith(fontSize: 22),
                       ),
-                      subtitle: Text('${s.nameEn} • ${s.nameTr} • ${s.ayahCount} ayet'),
+                      subtitle: Text(
+                          '${s.nameEn} • ${s.nameTr} • ${s.ayahCount} ayet'),
                       onTap: () {
                         Navigator.push(
                           context,

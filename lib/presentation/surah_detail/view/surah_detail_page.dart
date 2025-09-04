@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../core/app_theme.dart';
+import '../../settings/bloc/theme_cubit.dart';
 
 import '../../../domain/repositories/quran_repository.dart';
 import '../bloc/surah_detail_bloc.dart';
@@ -100,7 +102,14 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                         Text(
                           '${a.textAr} ﴿${a.numberInSurah}﴾',
                           textDirection: TextDirection.rtl,
-                          style: const TextStyle(fontSize: 22, height: 2),
+                          // Apply Arabic style with selected font family
+                          style: AppTheme.arabic(
+                            fontFamily: context
+                                .read<ThemeCubit>()
+                                .state
+                                .settings
+                                .arabicFontFamily,
+                          ).copyWith(fontSize: 24),
                         ),
                         // TR translation if exists (LTR)
                         if (a.textTr != null && a.textTr!.isNotEmpty)
