@@ -1,7 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import '../../core/hive_boxes.dart';
-import '../models/app_settings.dart';
-import '../../domain/entities/app_settings.dart';
+import 'package:ikra/core/hive_boxes.dart';
+import 'package:ikra/data/models/app_settings.dart';
+import 'package:ikra/domain/entities/app_settings.dart';
 
 /// Local data source dedicated to App Settings.
 /// Stores a single AppSettingsHive record in the 'settings' box.
@@ -18,7 +18,8 @@ class SettingsLocalDataSource {
   AppSettings getSettings() {
     final box = Hive.box<AppSettingsHive>(HiveBoxes.settings);
     if (box.isEmpty) {
-      return const AppSettings(themeMode: AppThemeMode.light, arabicFontFamily: null);
+      return const AppSettings(
+          themeMode: AppThemeMode.light,);
     }
     // We keep only one record, but take the last just in case.
     final last = box.values.isNotEmpty ? box.values.last : null;

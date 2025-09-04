@@ -1,12 +1,12 @@
-import '../../domain/entities/ayah.dart';
-import '../../domain/entities/surah.dart';
-import '../../domain/entities/reading_progress.dart';
-import '../../domain/entities/bookmark.dart';
-import '../../domain/repositories/quran_repository.dart';
-import '../datasources/quran_asset_ds.dart';
-import '../datasources/quran_local_ds.dart';
-import '../models/ayah.dart';
-import '../models/surah.dart';
+import 'package:ikra/data/datasources/quran_asset_ds.dart';
+import 'package:ikra/data/datasources/quran_local_ds.dart';
+import 'package:ikra/data/models/ayah.dart';
+import 'package:ikra/data/models/surah.dart';
+import 'package:ikra/domain/entities/ayah.dart';
+import 'package:ikra/domain/entities/bookmark.dart';
+import 'package:ikra/domain/entities/reading_progress.dart';
+import 'package:ikra/domain/entities/surah.dart';
+import 'package:ikra/domain/repositories/quran_repository.dart';
 
 class QuranRepositoryImpl implements QuranRepository {
   final QuranLocalDataSource local;
@@ -21,7 +21,7 @@ class QuranRepositoryImpl implements QuranRepository {
     final surahsRaw = (map['surahs'] as List).cast<Map<String, dynamic>>();
 
     final surahModels = <SurahHive>[];
-    final ayahModels  = <AyahHive>[];
+    final ayahModels = <AyahHive>[];
 
     for (final s in surahsRaw) {
       final number = s['surahNumber'] as int;
@@ -59,7 +59,8 @@ class QuranRepositoryImpl implements QuranRepository {
   Future<List<Surah>> getSurahList() async => local.getSurahList();
 
   @override
-  Future<List<Ayah>> getSurahAyah(int surah) async => local.getAyatBySurah(surah);
+  Future<List<Ayah>> getSurahAyah(int surah) async =>
+      local.getAyatBySurah(surah);
 
   // Reading progress
   @override
@@ -67,15 +68,18 @@ class QuranRepositoryImpl implements QuranRepository {
       local.setReadingProgress(ReadingProgress(surah: surah, ayah: ayah));
 
   @override
-  Future<ReadingProgress?> getReadingProgress() async => local.getReadingProgress();
+  Future<ReadingProgress?> getReadingProgress() async =>
+      local.getReadingProgress();
 
   // Bookmarks
   @override
   Future<List<Bookmark>> getBookmarks() async => local.getBookmarks();
 
   @override
-  Future<void> toggleBookmark(int surah, int ayah) => local.toggleBookmark(surah, ayah);
+  Future<void> toggleBookmark(int surah, int ayah) =>
+      local.toggleBookmark(surah, ayah);
 
   @override
-  Future<bool> isBookmarked(int surah, int ayah) async => local.isBookmarked(surah, ayah);
+  Future<bool> isBookmarked(int surah, int ayah) async =>
+      local.isBookmarked(surah, ayah);
 }

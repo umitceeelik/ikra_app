@@ -1,7 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import '../../core/hive_boxes.dart';
-import '../../domain/entities/prayer_settings.dart';
-import '../models/prayer_settings.dart';
+import 'package:ikra/core/hive_boxes.dart';
+import 'package:ikra/data/models/prayer_settings.dart';
+import 'package:ikra/domain/entities/prayer_settings.dart';
 
 /// Local data source for Prayer Settings stored in Hive.
 class PrayerSettingsLocalDataSource {

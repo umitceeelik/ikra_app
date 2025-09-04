@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../domain/repositories/prayer_repository.dart';
-import 'prayer_event.dart';
-import 'prayer_state.dart';
+import 'package:ikra/domain/repositories/prayer_repository.dart';
+import 'package:ikra/presentation/prayer/bloc/prayer_event.dart';
+import 'package:ikra/presentation/prayer/bloc/prayer_state.dart';
 
 /// BLoC for Prayer Times page: handles settings + daily computation.
 class PrayerBloc extends Bloc<PrayerEvent, PrayerState> {

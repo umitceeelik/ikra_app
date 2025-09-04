@@ -1,5 +1,5 @@
-import '../entities/prayer_settings.dart';
-import '../entities/prayer_day_times.dart';
+import 'package:ikra/domain/entities/prayer_day_times.dart';
+import 'package:ikra/domain/entities/prayer_settings.dart';
 
 /// Abstraction for prayer time operations and settings.
 abstract class PrayerRepository {
@@ -13,5 +13,6 @@ abstract class PrayerRepository {
   Future<PrayerDayTimes> computeTimesFor(DateTime date);
 
   /// NEW: Compute using the provided in-memory [settings] (no extra Hive read).
-  Future<PrayerDayTimes> computeTimesForWith(PrayerSettings settings, DateTime date);
+  Future<PrayerDayTimes> computeTimesForWith(
+      PrayerSettings settings, DateTime date,);
 }

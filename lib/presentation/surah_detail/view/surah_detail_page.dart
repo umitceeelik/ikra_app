@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../domain/repositories/quran_repository.dart';
-import '../bloc/surah_detail_bloc.dart';
-import '../bloc/surah_detail_event.dart';
-import '../bloc/surah_detail_state.dart';
-
-import '../../../core/app_theme.dart';
-import '../../settings/bloc/theme_cubit.dart';
-
+import 'package:ikra/core/app_theme.dart';
 // NEW: audio imports
-import '../../../data/audio/audio_url_provider.dart';
-import '../../audio/cubit/surah_audio_cubit.dart';
+import 'package:ikra/data/audio/audio_url_provider.dart';
+import 'package:ikra/domain/repositories/quran_repository.dart';
+import 'package:ikra/presentation/audio/cubit/surah_audio_cubit.dart';
+import 'package:ikra/presentation/settings/bloc/theme_cubit.dart';
+import 'package:ikra/presentation/surah_detail/bloc/surah_detail_bloc.dart';
+import 'package:ikra/presentation/surah_detail/bloc/surah_detail_event.dart';
+import 'package:ikra/presentation/surah_detail/bloc/surah_detail_state.dart';
 
 /// Detail page for a given Surah.
 /// - Optionally jumps to a specific verse (initialAyah).
@@ -60,9 +57,11 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => SurahDetailBloc(widget.repo)..add(SurahDetailRequested(widget.surah)),
+      create: (_) =>
+          SurahDetailBloc(widget.repo)..add(SurahDetailRequested(widget.surah)),
       child: Scaffold(
-        appBar: AppBar(title: Text(widget.titleAr, textDirection: TextDirection.rtl)),
+        appBar: AppBar(
+            title: Text(widget.titleAr, textDirection: TextDirection.rtl),),
         body: BlocBuilder<SurahDetailBloc, SurahDetailState>(
           builder: (context, state) {
             if (state.isLoading) {
@@ -79,7 +78,6 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
             _audio ??= SurahAudioCubit(
               urlProvider: AudioUrlProvider(),
               surah: widget.surah,
-              reciter: Reciter.alafasy,
             );
             // If playlist not loaded yet, load it
             if (_audio!.state.totalAyah != ayat.length) {
@@ -96,32 +94,41 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                   children: [
                     ListView.builder(
                       controller: _controller,
-                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 100), // extra bottom for mini-player
+                      padding: const EdgeInsets.fromLTRB(
+                          16, 16, 16, 100,), // extra bottom for mini-player
                       itemCount: ayat.length,
                       itemBuilder: (_, i) {
                         final a = ayat[i];
-                        final isPlayingHere = (audio.currentAyah == a.numberInSurah) && audio.isPlaying;
+                        final isPlayingHere =
+                            (audio.currentAyah == a.numberInSurah) &&
+                                audio.isPlaying;
 
                         return GestureDetector(
                           onTap: () {
                             // Set this ayah as the last read position
-                            widget.repo.updateReadingProgress(widget.surah, a.numberInSurah);
+                            widget.repo.updateReadingProgress(
+                                widget.surah, a.numberInSurah,);
                             // Start audio from this ayah
                             _audio!.playFrom(a.numberInSurah);
                           },
                           onLongPress: () async {
-                            await widget.repo.toggleBookmark(widget.surah, a.numberInSurah);
+                            await widget.repo
+                                .toggleBookmark(widget.surah, a.numberInSurah);
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Yer imi değişti • ${widget.surah}:${a.numberInSurah}')),
+                              SnackBar(
+                                  content: Text(
+                                      'Yer imi değişti • ${widget.surah}:${a.numberInSurah}',),),
                             );
-                            setState(() {}); // refresh small state (bookmark icon)
+                            setState(
+                                () {},); // refresh small state (bookmark icon)
                           },
                           child: Container(
                             margin: const EdgeInsets.symmetric(vertical: 8),
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               color: isPlayingHere
-                                  ? Colors.green.withOpacity(0.12)   // highlight currently playing
+                                  ? Colors.green.withOpacity(
+                                      0.12,) // highlight currently playing
                                   : Colors.brown.withOpacity(0.06),
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -133,7 +140,11 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                                   '${a.textAr} ﴿${a.numberInSurah}﴾',
                                   textDirection: TextDirection.rtl,
                                   style: AppTheme.arabic(
-                                    fontFamily: context.read<ThemeCubit>().state.settings.arabicFontFamily,
+                                    fontFamily: context
+                                        .read<ThemeCubit>()
+                                        .state
+                                        .settings
+                                        .arabicFontFamily,
                                   ).copyWith(fontSize: 24),
                                 ),
                                 // TR translation if exists (LTR)
@@ -142,19 +153,24 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                                     padding: const EdgeInsets.only(top: 6),
                                     child: Align(
                                       alignment: Alignment.centerLeft,
-                                      child: Text(a.textTr!, textDirection: TextDirection.ltr),
+                                      child: Text(a.textTr!,
+                                          textDirection: TextDirection.ltr,),
                                     ),
                                   ),
                                 const SizedBox(height: 8),
                                 // Row: small hint + bookmark state (async check)
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       'Dokun: buradan oynat • Uzun bas: yer imi',
-                                      style: Theme.of(context).textTheme.bodySmall,
+                                      style:
+                                          Theme.of(context).textTheme.bodySmall,
                                     ),
-                                    Icon(isPlayingHere ? Icons.equalizer : Icons.play_arrow_rounded),
+                                    Icon(isPlayingHere
+                                        ? Icons.equalizer
+                                        : Icons.play_arrow_rounded,),
                                   ],
                                 ),
                               ],
@@ -227,7 +243,9 @@ class _MiniPlayer extends StatelessWidget {
             IconButton(
               tooltip: isPlaying ? 'Duraklat' : 'Oynat',
               onPressed: isLoading ? null : () => onToggle(),
-              icon: Icon(isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill),
+              icon: Icon(isPlaying
+                  ? Icons.pause_circle_filled
+                  : Icons.play_circle_fill,),
               iconSize: 36,
             ),
             IconButton(

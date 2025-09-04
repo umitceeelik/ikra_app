@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+
 import '../../domain/entities/prayer_day_times.dart';
 import '../../domain/entities/prayer_settings.dart';
 
@@ -21,15 +22,20 @@ class PrayerRemoteDataSource {
     final y = date.year.toString().padLeft(4, '0');
     final m = date.month.toString().padLeft(2, '0');
     final d = date.day.toString().padLeft(2, '0');
-    final dateStr = '$y-$m-$d';
 
     // AlAdhan timings-by-date with method=Diyanet; school per madhab.
     final school = (madhab == Madhab.hanafi) ? 1 : 0;
 
-    final uri = Uri.parse(
-      'https://api.aladhan.com/v1/timings/$dateStr'
-      '?latitude=$latitude&longitude=$longitude'
-      '&method=13&school=$school', // 13 is often used for Diyanet
+    // Prefer Uri.https to avoid manual string concat mistakes.
+    final uri = Uri.https(
+      'api.aladhan.com',
+      '/v1/timings/$y-$m-$d',
+      {
+        'latitude': latitude.toString(),
+        'longitude': longitude.toString(),
+        'method': '13', // Diyanet
+        'school': '$school', // 0=Shafi, 1=Hanafi
+      },
     );
 
     final res = await _client.get(uri);
@@ -37,26 +43,37 @@ class PrayerRemoteDataSource {
       throw Exception('Failed to fetch timings: HTTP ${res.statusCode}');
     }
 
-    final json = jsonDecode(res.body) as Map<String, dynamic>;
-    final data = json['data'] as Map<String, dynamic>;
-    final timings = data['timings'] as Map<String, dynamic>;
+    final root = jsonDecode(res.body) as Map<String, dynamic>;
+    final data = root['data'] as Map<String, dynamic>;
+    // Cast timings map to <String, dynamic> explicitly
+    final Map<String, dynamic> timings = (data['timings'] as Map).cast<String, dynamic>();
 
-    // Parse local times as device-local DateTime
-    DateTime _parse(String hhmm) {
-      // Example "05:21 (EET)" or "05:21"; we only take HH:MM
-      final parts = hhmm.split(' ').first.split(':');
+    // Helper: read a String value from the timings map safely.
+    String _str(String key) {
+      final v = timings[key];
+      if (v is String) return v.trim();
+      if (v == null) {
+        throw FormatException('Missing key "$key" in API response.');
+      }
+      return v.toString().trim();
+    }
+
+    // Parse "HH:mm (ZONE)" or "HH:mm" into a local DateTime on [date]
+    DateTime _parse(String raw) {
+      final hhmm = raw.split(' ').first; // drop "(+03)" or "(EET)" suffixes
+      final parts = hhmm.split(':');
       final h = int.parse(parts[0]);
       final mn = int.parse(parts[1]);
       return DateTime(date.year, date.month, date.day, h, mn);
     }
 
     return PrayerDayTimes(
-      fajr: _parse(timings['Fajr']),
-      sunrise: _parse(timings['Sunrise']),
-      dhuhr: _parse(timings['Dhuhr']),
-      asr: _parse(timings['Asr']),
-      maghrib: _parse(timings['Maghrib']),
-      isha: _parse(timings['Isha']),
+      fajr: _parse(_str('Fajr')),
+      sunrise: _parse(_str('Sunrise')),
+      dhuhr: _parse(_str('Dhuhr')),
+      asr: _parse(_str('Asr')),
+      maghrib: _parse(_str('Maghrib')),
+      isha: _parse(_str('Isha')),
     );
   }
 }

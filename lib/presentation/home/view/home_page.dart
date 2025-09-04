@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../data/datasources/quran_asset_ds.dart';
-import '../../../data/datasources/quran_local_ds.dart';
-import '../../../data/repositories/quran_repository_impl.dart';
-import '../../../domain/repositories/quran_repository.dart';
-import '../../surah_list/view/surah_list_page.dart';
-import '../../surah_detail/view/surah_detail_page.dart';
-import '../bloc/home_bloc.dart';
-import '../bloc/home_event.dart';
-import '../bloc/home_state.dart';
-import '../../../core/app_theme.dart';
-import '../../settings/view/settings_page.dart';
-import '../../settings/bloc/theme_cubit.dart';
-import '../../prayer/view/prayer_page.dart';
+import 'package:ikra/core/app_theme.dart';
+import 'package:ikra/data/datasources/quran_asset_ds.dart';
+import 'package:ikra/data/datasources/quran_local_ds.dart';
+import 'package:ikra/data/repositories/quran_repository_impl.dart';
+import 'package:ikra/domain/repositories/quran_repository.dart';
+import 'package:ikra/presentation/home/bloc/home_bloc.dart';
+import 'package:ikra/presentation/home/bloc/home_event.dart';
+import 'package:ikra/presentation/home/bloc/home_state.dart';
+import 'package:ikra/presentation/prayer/view/prayer_page.dart';
+import 'package:ikra/presentation/settings/bloc/theme_cubit.dart';
+import 'package:ikra/presentation/settings/view/settings_page.dart';
+import 'package:ikra/presentation/surah_detail/view/surah_detail_page.dart';
+import 'package:ikra/presentation/surah_list/view/surah_list_page.dart';
 
 /// Simple Home screen with:
 /// - Continue Reading card (if progress exists)
@@ -28,13 +27,15 @@ class HomePage extends StatelessWidget {
     // For simplicity we wire the repo here (you can move to DI later).
     final local = QuranLocalDataSource();
     final asset = QuranAssetDataSource();
-    final QuranRepository repo = QuranRepositoryImpl(local: local, asset: asset);
+    final QuranRepository repo =
+        QuranRepositoryImpl(local: local, asset: asset);
 
     return FutureBuilder(
       future: local.init(), // Initialize Hive before using it on Home
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
-          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+          return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),);
         }
         return BlocProvider(
           create: (_) => HomeBloc(repo)..add(HomeRequested()),
@@ -90,9 +91,10 @@ class HomePage extends StatelessWidget {
                       _EmptyContinueCard(onBrowse: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const SurahListPage()),
+                          MaterialPageRoute(
+                              builder: (_) => const SurahListPage(),),
                         );
-                      }),
+                      },),
 
                     const SizedBox(height: 16),
 
@@ -124,7 +126,8 @@ class HomePage extends StatelessWidget {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const SurahListPage()),
+                          MaterialPageRoute(
+                              builder: (_) => const SurahListPage(),),
                         );
                       },
                       icon: const Icon(Icons.menu_book),

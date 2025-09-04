@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import '../../domain/entities/app_settings.dart';
+import 'package:ikra/domain/entities/app_settings.dart';
 
 part 'app_settings.g.dart';
 

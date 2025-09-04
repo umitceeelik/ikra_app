@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../../domain/entities/ayah.dart';
+import 'package:ikra/domain/entities/ayah.dart';
 
 /// States produced by the Surah detail BLoC.
 class SurahDetailState extends Equatable {

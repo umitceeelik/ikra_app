@@ -1,13 +1,13 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import '../../domain/entities/ayah.dart';
-import '../../domain/entities/surah.dart';
-import '../../domain/entities/reading_progress.dart';
-import '../../domain/entities/bookmark.dart';
-import '../../core/hive_boxes.dart';
-import '../models/ayah.dart';
-import '../models/surah.dart';
-import '../models/reading_progress.dart';
-import '../models/bookmark.dart';
+import 'package:ikra/core/hive_boxes.dart';
+import 'package:ikra/data/models/ayah.dart';
+import 'package:ikra/data/models/bookmark.dart';
+import 'package:ikra/data/models/reading_progress.dart';
+import 'package:ikra/data/models/surah.dart';
+import 'package:ikra/domain/entities/ayah.dart';
+import 'package:ikra/domain/entities/bookmark.dart';
+import 'package:ikra/domain/entities/reading_progress.dart';
+import 'package:ikra/domain/entities/surah.dart';
 
 /// Local data source powered by Hive.
 /// Responsible for: initializing Hive, opening boxes, and simple reads/writes.

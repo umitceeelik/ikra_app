@@ -1,21 +1,22 @@
 import 'package:geolocator/geolocator.dart';
-import 'package:adhan_dart/adhan_dart.dart' as adhan;
+import 'package:ikra/core/errors/network_exceptions.dart';
+import 'package:ikra/core/net/connectivity_service.dart';
+import 'package:ikra/data/datasources/prayer_remote_ds.dart';
+import 'package:ikra/data/datasources/prayer_settings_local_ds.dart';
+import 'package:ikra/domain/entities/prayer_day_times.dart';
+import 'package:ikra/domain/entities/prayer_settings.dart';
+import 'package:ikra/domain/repositories/prayer_repository.dart';
 
-import '../../domain/entities/prayer_settings.dart';
-import '../../domain/entities/prayer_day_times.dart';
-import '../../domain/repositories/prayer_repository.dart';
-import '../datasources/prayer_remote_ds.dart';
-import '../datasources/prayer_settings_local_ds.dart';
-
-/// Concrete repository for prayer times:
+/// Online-only repository for prayer times:
 /// - Stores settings in Hive
 /// - Reads device location via geolocator
-/// - Computes times via adhan_dart (v1.1.x API)
+/// - Fetches times from the remote API (Diyanet via AlAdhan)
 class PrayerRepositoryImpl implements PrayerRepository {
   final PrayerSettingsLocalDataSource local;
-  final PrayerRemoteDataSource remote = PrayerRemoteDataSource();
+  final PrayerRemoteDataSource remote;
+  final ConnectivityService connectivity;
 
-  PrayerRepositoryImpl(this.local);
+  PrayerRepositoryImpl(this.local, this.remote, this.connectivity);
 
   @override
   Future<PrayerSettings> getSettings() async => local.get();
@@ -47,79 +48,29 @@ class PrayerRepositoryImpl implements PrayerRepository {
 
   @override
   Future<PrayerDayTimes> computeTimesFor(DateTime date) async {
-    final s = await getSettings(); // legacy path; keeps compatibility
+    final s = await getSettings();
     return computeTimesForWith(s, date);
   }
 
   @override
   Future<PrayerDayTimes> computeTimesForWith(PrayerSettings settings, DateTime date) async {
     final s = settings;
-
     if (!s.hasLocation) {
       throw Exception('Location is required to compute prayer times.');
     }
 
-    if (s.source == PrayerSource.diyanetOnline) {
-      // Use online API (AlAdhan with Diyanet method)
-      return remote.fetchDiyanetByLatLng(
-        latitude: s.latitude!,
-        longitude: s.longitude!,
-        date: date,
-        madhab: s.madhab,
-      );
+    // Online-only: if offline, bail out with a clear exception.
+    final online = await connectivity.hasInternet();
+    if (!online) {
+      throw NoInternetException(); // upper layers will show an "internet required" UI
     }
 
-    // Fallback: local calculation via adhan_dart
-    final coords = adhan.Coordinates(s.latitude!, s.longitude!);
-    final params = _calcParams(s.method);
-    params.madhab = (s.madhab == Madhab.hanafi)
-        ? adhan.Madhab.hanafi
-        : adhan.Madhab.shafi;
-
-    final localDate = DateTime(date.year, date.month, date.day);
-    final pt = adhan.PrayerTimes(
-      date: localDate,
-      coordinates: coords,
-      calculationParameters: params,
+    // Fetch from remote (Diyanet via AlAdhan). We honor madhab=Shafi/Hanafi.
+    return remote.fetchDiyanetByLatLng(
+      latitude: s.latitude!,
+      longitude: s.longitude!,
+      date: date,
+      madhab: s.madhab,
     );
-
-    DateTime _nn(DateTime? dt, String label) {
-      if (dt == null) throw Exception('Failed to compute $label time.');
-      return dt;
-    }
-
-    return PrayerDayTimes(
-      fajr: _nn(pt.fajr, 'Fajr'),
-      sunrise: _nn(pt.sunrise, 'Sunrise'),
-      dhuhr: _nn(pt.dhuhr, 'Dhuhr'),
-      asr: _nn(pt.asr, 'Asr'),
-      maghrib: _nn(pt.maghrib, 'Maghrib'),
-      isha: _nn(pt.isha, 'Isha'),
-    );
-  }
-
-  /// Maps our CalcMethod enum to adhan_dart's CalculationMethod static factories.
-  /// NOTE: adhan_dart uses camelCase names (e.g., muslimWorldLeague, ummAlQura, northAmerica).
-  adhan.CalculationParameters _calcParams(CalcMethod method) {
-    switch (method) {
-      case CalcMethod.muslimWorldLeague:
-        return adhan.CalculationMethod.muslimWorldLeague();
-      case CalcMethod.egyptian:
-        return adhan.CalculationMethod.egyptian();
-      case CalcMethod.karachi:
-        return adhan.CalculationMethod.karachi();
-      case CalcMethod.ummAlQura:
-        return adhan.CalculationMethod.ummAlQura();
-      case CalcMethod.dubai:
-        return adhan.CalculationMethod.dubai();
-      case CalcMethod.qatar:
-        return adhan.CalculationMethod.qatar();
-      case CalcMethod.kuwait:
-        return adhan.CalculationMethod.kuwait();
-      case CalcMethod.northAmerica:
-        return adhan.CalculationMethod.northAmerica();
-      case CalcMethod.moonsightingCommittee:
-        return adhan.CalculationMethod.moonsightingCommittee();
-    }
   }
 }

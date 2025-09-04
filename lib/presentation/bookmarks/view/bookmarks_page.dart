@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../data/datasources/quran_asset_ds.dart';
-import '../../../data/datasources/quran_local_ds.dart';
-import '../../../data/repositories/quran_repository_impl.dart';
-import '../../../domain/repositories/quran_repository.dart';
-import '../../surah_detail/view/surah_detail_page.dart';
-import '../bloc/bookmarks_bloc.dart';
-import '../bloc/bookmarks_event.dart';
-import '../bloc/bookmarks_state.dart';
+import 'package:ikra/data/datasources/quran_asset_ds.dart';
+import 'package:ikra/data/datasources/quran_local_ds.dart';
+import 'package:ikra/data/repositories/quran_repository_impl.dart';
+import 'package:ikra/domain/repositories/quran_repository.dart';
+import 'package:ikra/presentation/bookmarks/bloc/bookmarks_bloc.dart';
+import 'package:ikra/presentation/bookmarks/bloc/bookmarks_event.dart';
+import 'package:ikra/presentation/bookmarks/bloc/bookmarks_state.dart';
+import 'package:ikra/presentation/surah_detail/view/surah_detail_page.dart';
 
 /// Simple Bookmarks page: lists saved verses and allows navigation.
 class BookmarksPage extends StatelessWidget {
@@ -19,13 +18,15 @@ class BookmarksPage extends StatelessWidget {
     // For simplicity we wire the repo locally (can move to DI later).
     final local = QuranLocalDataSource();
     final asset = QuranAssetDataSource();
-    final QuranRepository repo = QuranRepositoryImpl(local: local, asset: asset);
+    final QuranRepository repo =
+        QuranRepositoryImpl(local: local, asset: asset);
 
     return FutureBuilder(
       future: local.init(),
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
-          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+          return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),);
         }
         return BlocProvider(
           create: (_) => BookmarksBloc(repo)..add(BookmarksRequested()),
@@ -33,8 +34,10 @@ class BookmarksPage extends StatelessWidget {
             appBar: AppBar(title: const Text('Bookmarks')),
             body: BlocBuilder<BookmarksBloc, BookmarksState>(
               builder: (context, state) {
-                if (state.isLoading) return const Center(child: CircularProgressIndicator());
-                if (state.error != null) return Center(child: Text(state.error!));
+                if (state.isLoading)
+                  return const Center(child: CircularProgressIndicator());
+                if (state.error != null)
+                  return Center(child: Text(state.error!));
 
                 final items = state.data!;
                 if (items.isEmpty) {
@@ -48,14 +51,16 @@ class BookmarksPage extends StatelessWidget {
                   itemBuilder: (_, i) {
                     final b = items[i];
                     return ListTile(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),),
                       tileColor: Colors.brown.withOpacity(0.06),
                       title: Text('Surah ${b.surah} • Ayah ${b.ayah}'),
                       subtitle: Text('Saved at: ${b.savedAt}'),
                       trailing: IconButton(
                         icon: const Icon(Icons.delete_outline),
-                        onPressed: () => context.read<BookmarksBloc>()
-                          .add(BookmarkToggled(b.surah, b.ayah)),
+                        onPressed: () => context
+                            .read<BookmarksBloc>()
+                            .add(BookmarkToggled(b.surah, b.ayah)),
                       ),
                       onTap: () {
                         Navigator.push(

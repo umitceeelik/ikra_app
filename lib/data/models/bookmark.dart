@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import '../../domain/entities/bookmark.dart';
+import 'package:ikra/domain/entities/bookmark.dart';
 
 part 'bookmark.g.dart';
 
@@ -17,9 +17,8 @@ class BookmarkHive extends HiveObject {
 
   Bookmark toEntity() => Bookmark(surah: surah, ayah: ayah, savedAt: savedAt);
 
-  static BookmarkHive fromEntity(Bookmark e) =>
-      BookmarkHive()
-        ..surah = e.surah
-        ..ayah = e.ayah
-        ..savedAt = e.savedAt;
+  static BookmarkHive fromEntity(Bookmark e) => BookmarkHive()
+    ..surah = e.surah
+    ..ayah = e.ayah
+    ..savedAt = e.savedAt;
 }

@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import '../../domain/entities/reading_progress.dart';
+import 'package:ikra/domain/entities/reading_progress.dart';
 
 part 'reading_progress.g.dart';
 
@@ -16,8 +16,7 @@ class ReadingProgressHive extends HiveObject {
   @HiveField(2)
   late DateTime updatedAt;
 
-  ReadingProgress toEntity() =>
-      ReadingProgress(surah: surah, ayah: ayah);
+  ReadingProgress toEntity() => ReadingProgress(surah: surah, ayah: ayah);
 
   static ReadingProgressHive fromEntity(ReadingProgress e) =>
       ReadingProgressHive()

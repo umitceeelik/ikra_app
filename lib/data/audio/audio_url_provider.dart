@@ -4,10 +4,10 @@
 /// where SSS = 3-digit surah, AAA = 3-digit ayah (both zero-padded).
 ///
 /// If needed, you can switch to 128kbps by changing the base path below.
-/// Directory listing reference shows files like 001001.mp3 exist. 
+/// Directory listing reference shows files like 001001.mp3 exist.
 /// See: everyayah.com/data/Alafasy_64kbps/ and .../Alafasy_128kbps/
 /// (This fixes 404s caused by a wrong folder name.)
-/// 
+///
 /// Reciter enum left in place so we can add more reciters later.
 enum Reciter { alafasy /*, husary, minshawi ... */ }
 

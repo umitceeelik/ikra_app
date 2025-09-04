@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../domain/repositories/quran_repository.dart';
-import 'surah_list_event.dart';
-import 'surah_list_state.dart';
+import 'package:ikra/domain/repositories/quran_repository.dart';
+import 'package:ikra/presentation/surah_list/bloc/surah_list_event.dart';
+import 'package:ikra/presentation/surah_list/bloc/surah_list_state.dart';
 
 /// BLoC that handles the flow for the Surah list page.
 class SurahListBloc extends Bloc<SurahListEvent, SurahListState> {

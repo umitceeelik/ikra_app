@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../../domain/entities/bookmark.dart';
+import 'package:ikra/domain/entities/bookmark.dart';
 
 /// States produced by the Bookmarks BLoC.
 class BookmarksState extends Equatable {

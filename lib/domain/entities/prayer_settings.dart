@@ -16,10 +16,9 @@ enum CalcMethod {
 /// Juristic method for Asr.
 enum Madhab { shafi, hanafi }
 
-/// NEW: Data source for prayer times.
 enum PrayerSource {
-  localCalc,      // adhan_dart local calculation
-  diyanetOnline,  // fetch from an online API that matches Diyanet
+  localCalc,      // legacy (we won’t use it anymore)
+  diyanetOnline,  // online source (AlAdhan method=13)
 }
 
 /// Domain entity for prayer settings (persisted locally).
@@ -35,7 +34,7 @@ class PrayerSettings extends Equatable {
     this.longitude,
     required this.method,
     required this.madhab,
-    this.source = PrayerSource.localCalc, // default: local calc
+    this.source = PrayerSource.diyanetOnline, // <- default online
   });
 
   bool get hasLocation => latitude != null && longitude != null;

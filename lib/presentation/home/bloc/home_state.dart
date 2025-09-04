@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import '../../../domain/entities/reading_progress.dart';
-import '../../../domain/entities/ayah.dart';
+import 'package:ikra/domain/entities/ayah.dart';
+import 'package:ikra/domain/entities/reading_progress.dart';
 
 /// States produced by the Home BLoC.
 class HomeState extends Equatable {

@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import '../../domain/entities/surah.dart';
+import 'package:ikra/domain/entities/surah.dart';
 
 part 'surah.g.dart';
 

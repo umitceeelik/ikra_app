@@ -18,5 +18,6 @@ class Ayah extends Equatable {
   });
 
   @override
-  List<Object?> get props => [surah, numberInSurah, textAr, textTr, textEn, juz];
+  List<Object?> get props =>
+      [surah, numberInSurah, textAr, textTr, textEn, juz];
 }

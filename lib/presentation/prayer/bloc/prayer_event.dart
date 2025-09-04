@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../../domain/entities/prayer_settings.dart';
+import 'package:ikra/domain/entities/prayer_settings.dart';
 
 /// Events driving the prayer times flow.
 sealed class PrayerEvent extends Equatable {

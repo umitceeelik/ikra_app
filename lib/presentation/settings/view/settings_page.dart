@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../domain/entities/app_settings.dart';
-import '../../../domain/entities/prayer_settings.dart';
-import '../../settings/bloc/theme_cubit.dart';
+import 'package:ikra/domain/entities/app_settings.dart';
+import 'package:ikra/presentation/settings/bloc/theme_cubit.dart';
 
 /// Simple Settings page:
 /// - Theme: Light / Sepia / Dark
@@ -30,7 +29,7 @@ class SettingsPage extends StatelessWidget {
             segments: const [
               ButtonSegment(value: AppThemeMode.light, label: Text('Light')),
               ButtonSegment(value: AppThemeMode.sepia, label: Text('Sepia')),
-              ButtonSegment(value: AppThemeMode.dark,  label: Text('Dark')),
+              ButtonSegment(value: AppThemeMode.dark, label: Text('Dark')),
             ],
             selected: {state.settings.themeMode},
             onSelectionChanged: (sel) => cubit.setThemeMode(sel.first),
@@ -38,14 +37,17 @@ class SettingsPage extends StatelessWidget {
           const SizedBox(height: 24),
 
           // Arabic font selection
-          Text('Arapça Yazı Tipi', style: Theme.of(context).textTheme.titleMedium),
+          Text('Arapça Yazı Tipi',
+              style: Theme.of(context).textTheme.titleMedium,),
           const SizedBox(height: 8),
           DropdownButtonFormField<String?>(
-            value: state.settings.arabicFontFamily,
+            initialValue: state.settings.arabicFontFamily,
             items: const [
-              DropdownMenuItem(value: null, child: Text('System Default')),
+              DropdownMenuItem(child: Text('System Default')),
               DropdownMenuItem(value: 'AmiriQuran', child: Text('AmiriQuran')),
-              DropdownMenuItem(value: 'KFGQPCUthmanicHafs', child: Text('KFGQPC Uthmanic Hafs')),
+              DropdownMenuItem(
+                  value: 'KFGQPCUthmanicHafs',
+                  child: Text('KFGQPC Uthmanic Hafs'),),
             ],
             onChanged: (v) => cubit.setArabicFontFamily(v),
             decoration: const InputDecoration(

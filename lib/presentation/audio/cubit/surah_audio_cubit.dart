@@ -1,13 +1,14 @@
 import 'dart:async';
+
+import 'package:ikra/data/audio/audio_url_provider.dart';
 import 'package:just_audio/just_audio.dart';
-import '../../../data/audio/audio_url_provider.dart';
 
 /// Lightweight audio state for a single Surah playback session.
 class SurahAudioState {
   final bool isLoading;
   final bool isPlaying;
-  final int? currentAyah;   // 1-based index of the currently playing ayah
-  final int totalAyah;      // total number of ayat in this surah
+  final int? currentAyah; // 1-based index of the currently playing ayah
+  final int totalAyah; // total number of ayat in this surah
   final String? error;
   final Reciter reciter;
 
@@ -85,11 +86,13 @@ class SurahAudioCubit {
 
   /// Build the playlist for this surah with [totalAyah] tracks.
   Future<void> load({required int totalAyah}) async {
-    _emit(_state.copyWith(isLoading: true, totalAyah: totalAyah, currentAyah: 1, error: null));
+    _emit(_state.copyWith(
+        isLoading: true, totalAyah: totalAyah, currentAyah: 1,),);
     try {
       final sources = List.generate(totalAyah, (i) {
         final ayah = i + 1;
-        final url = _urlProvider.ayahUrl(reciter: _state.reciter, surah: surah, ayah: ayah);
+        final url = _urlProvider.ayahUrl(
+            reciter: _state.reciter, surah: surah, ayah: ayah,);
         return AudioSource.uri(Uri.parse(url));
       });
 

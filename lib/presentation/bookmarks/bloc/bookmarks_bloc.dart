@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../domain/repositories/quran_repository.dart';
-import 'bookmarks_event.dart';
-import 'bookmarks_state.dart';
+import 'package:ikra/domain/repositories/quran_repository.dart';
+import 'package:ikra/presentation/bookmarks/bloc/bookmarks_event.dart';
+import 'package:ikra/presentation/bookmarks/bloc/bookmarks_state.dart';
 
 /// BLoC that manages bookmark list and toggle actions.
 class BookmarksBloc extends Bloc<BookmarksEvent, BookmarksState> {

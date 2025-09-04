@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../domain/entities/app_settings.dart';
-import '../../../domain/repositories/settings_repository.dart';
+import 'package:ikra/domain/entities/app_settings.dart';
+import 'package:ikra/domain/repositories/settings_repository.dart';
 
 /// State for the ThemeCubit: current settings.
 class ThemeState {
@@ -16,7 +16,8 @@ class ThemeState {
 class ThemeCubit extends Cubit<ThemeState> {
   final SettingsRepository repo;
 
-  ThemeCubit(this.repo) : super(const ThemeState(AppSettings(themeMode: AppThemeMode.light))) {
+  ThemeCubit(this.repo)
+      : super(const ThemeState(AppSettings(themeMode: AppThemeMode.light))) {
     _load();
   }
 

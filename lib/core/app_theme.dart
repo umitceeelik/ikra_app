@@ -17,9 +17,8 @@ class AppTheme {
       useMaterial3: true,
       colorScheme: const ColorScheme.light(
         primary: Color(0xFF7A5C44),
-        onPrimary: Colors.white,
         secondary: Color(0xFF94765C),
-        surface: Color(0xFFF6EFE6),   // warm paper-like background
+        surface: Color(0xFFF6EFE6), // warm paper-like background
         onSurface: Color(0xFF2A2A2A),
       ),
       scaffoldBackgroundColor: const Color(0xFFF6EFE6),
@@ -55,7 +54,8 @@ class AppTheme {
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
       ),

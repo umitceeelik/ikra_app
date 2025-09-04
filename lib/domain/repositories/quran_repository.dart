@@ -1,7 +1,7 @@
-import '../entities/ayah.dart';
-import '../entities/bookmark.dart';
-import '../entities/reading_progress.dart';
-import '../entities/surah.dart';
+import 'package:ikra/domain/entities/ayah.dart';
+import 'package:ikra/domain/entities/bookmark.dart';
+import 'package:ikra/domain/entities/reading_progress.dart';
+import 'package:ikra/domain/entities/surah.dart';
 
 /// Repository contract that the presentation layer depends on.
 /// Data sources (Hive/Assets/API) can change underneath without affecting UI.

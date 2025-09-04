@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../domain/repositories/quran_repository.dart';
-import '../../../domain/entities/ayah.dart';
-import '../../../domain/entities/reading_progress.dart';
-import 'home_event.dart';
-import 'home_state.dart';
+import 'package:ikra/domain/entities/ayah.dart';
+import 'package:ikra/domain/entities/reading_progress.dart';
+import 'package:ikra/domain/repositories/quran_repository.dart';
+import 'package:ikra/presentation/home/bloc/home_event.dart';
+import 'package:ikra/presentation/home/bloc/home_state.dart';
 
 /// BLoC for the Home page.
 /// Loads: reading progress (if any), and a deterministic "verse of the day".
@@ -28,7 +28,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         final surahs = await repo.getSurahList();
         Ayah? votd;
         if (surahs.isNotEmpty) {
-          final epoch = DateTime(2020, 1, 1);
+          final epoch = DateTime(2020);
           final days = DateTime.now().difference(epoch).inDays.abs();
           final surahIdx = days % surahs.length;
           final surah = surahs[surahIdx];

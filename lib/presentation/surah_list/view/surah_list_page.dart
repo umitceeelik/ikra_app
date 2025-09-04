@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../core/app_theme.dart';
-import '../../settings/bloc/theme_cubit.dart';
-
-import '../../../data/datasources/quran_asset_ds.dart';
-import '../../../data/datasources/quran_local_ds.dart';
-import '../../../data/repositories/quran_repository_impl.dart';
-import '../../../domain/repositories/quran_repository.dart';
-import '../../surah_detail/view/surah_detail_page.dart';
-import '../bloc/surah_list_bloc.dart';
-import '../bloc/surah_list_event.dart';
-import '../bloc/surah_list_state.dart';
+import 'package:ikra/core/app_theme.dart';
+import 'package:ikra/data/datasources/quran_asset_ds.dart';
+import 'package:ikra/data/datasources/quran_local_ds.dart';
+import 'package:ikra/data/repositories/quran_repository_impl.dart';
+import 'package:ikra/domain/repositories/quran_repository.dart';
+import 'package:ikra/presentation/settings/bloc/theme_cubit.dart';
+import 'package:ikra/presentation/surah_detail/view/surah_detail_page.dart';
+import 'package:ikra/presentation/surah_list/bloc/surah_list_bloc.dart';
+import 'package:ikra/presentation/surah_list/bloc/surah_list_event.dart';
+import 'package:ikra/presentation/surah_list/bloc/surah_list_state.dart';
 
 /// Page flow:
 /// - Wait for Hive initialization (FutureBuilder).
@@ -24,14 +23,17 @@ class SurahListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final local = QuranLocalDataSource();
     final asset = QuranAssetDataSource();
-    final QuranRepository repo = QuranRepositoryImpl(local: local, asset: asset);
+    final QuranRepository repo =
+        QuranRepositoryImpl(local: local, asset: asset);
 
     return FutureBuilder(
-      future: local.init(), // 1) Initialize Hive (register adapters & open boxes)
+      future:
+          local.init(), // 1) Initialize Hive (register adapters & open boxes)
       builder: (context, snapshot) {
         // Do not build the page until Hive is ready
         if (snapshot.connectionState != ConnectionState.done) {
-          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+          return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),);
         }
 
         // 2) Provide the BLoC once Hive is initialized
@@ -56,7 +58,8 @@ class SurahListPage extends StatelessWidget {
                   itemBuilder: (context, i) {
                     final s = list[i];
                     return ListTile(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),),
                       tileColor: Colors.brown.withOpacity(0.06),
                       title: Text(
                         s.nameAr,
@@ -71,7 +74,7 @@ class SurahListPage extends StatelessWidget {
                         ).copyWith(fontSize: 22),
                       ),
                       subtitle: Text(
-                          '${s.nameEn} • ${s.nameTr} • ${s.ayahCount} ayet'),
+                          '${s.nameEn} • ${s.nameTr} • ${s.ayahCount} ayet',),
                       onTap: () {
                         Navigator.push(
                           context,
