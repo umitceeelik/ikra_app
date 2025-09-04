@@ -4,6 +4,7 @@ import 'package:adhan_dart/adhan_dart.dart' as adhan;
 import '../../domain/entities/prayer_settings.dart';
 import '../../domain/entities/prayer_day_times.dart';
 import '../../domain/repositories/prayer_repository.dart';
+import '../datasources/prayer_remote_ds.dart';
 import '../datasources/prayer_settings_local_ds.dart';
 
 /// Concrete repository for prayer times:
@@ -12,6 +13,7 @@ import '../datasources/prayer_settings_local_ds.dart';
 /// - Computes times via adhan_dart (v1.1.x API)
 class PrayerRepositoryImpl implements PrayerRepository {
   final PrayerSettingsLocalDataSource local;
+  final PrayerRemoteDataSource remote = PrayerRemoteDataSource();
 
   PrayerRepositoryImpl(this.local);
 
@@ -45,34 +47,44 @@ class PrayerRepositoryImpl implements PrayerRepository {
 
   @override
   Future<PrayerDayTimes> computeTimesFor(DateTime date) async {
-    final s = await getSettings();
+    final s = await getSettings(); // legacy path; keeps compatibility
+    return computeTimesForWith(s, date);
+  }
+
+  @override
+  Future<PrayerDayTimes> computeTimesForWith(PrayerSettings settings, DateTime date) async {
+    final s = settings;
+
     if (!s.hasLocation) {
-      // Keep error text in English for dev logs
       throw Exception('Location is required to compute prayer times.');
     }
 
-    // Map domain enums to adhan_dart parameters.
-    final coords = adhan.Coordinates(s.latitude!, s.longitude!); // adhan_dart uses (lat, lng)
+    if (s.source == PrayerSource.diyanetOnline) {
+      // Use online API (AlAdhan with Diyanet method)
+      return remote.fetchDiyanetByLatLng(
+        latitude: s.latitude!,
+        longitude: s.longitude!,
+        date: date,
+        madhab: s.madhab,
+      );
+    }
+
+    // Fallback: local calculation via adhan_dart
+    final coords = adhan.Coordinates(s.latitude!, s.longitude!);
     final params = _calcParams(s.method);
-    // In adhan_dart, Madhab constants are strings ('hanafi'|'shafi')
     params.madhab = (s.madhab == Madhab.hanafi)
         ? adhan.Madhab.hanafi
         : adhan.Madhab.shafi;
 
-    // adhan_dart constructor expects DateTime + named params (NOT DateComponents)
     final localDate = DateTime(date.year, date.month, date.day);
     final pt = adhan.PrayerTimes(
       date: localDate,
       coordinates: coords,
       calculationParameters: params,
-      // precision: false // optional
     );
 
-    // Defensive helper to ensure null-safety under extreme latitudes
     DateTime _nn(DateTime? dt, String label) {
-      if (dt == null) {
-        throw Exception('Failed to compute $label time.');
-      }
+      if (dt == null) throw Exception('Failed to compute $label time.');
       return dt;
     }
 
@@ -91,7 +103,7 @@ class PrayerRepositoryImpl implements PrayerRepository {
   adhan.CalculationParameters _calcParams(CalcMethod method) {
     switch (method) {
       case CalcMethod.muslimWorldLeague:
-        return adhan.CalculationMethod.muslimWorldLeague(); // ✓ camelCase
+        return adhan.CalculationMethod.muslimWorldLeague();
       case CalcMethod.egyptian:
         return adhan.CalculationMethod.egyptian();
       case CalcMethod.karachi:
@@ -106,8 +118,8 @@ class PrayerRepositoryImpl implements PrayerRepository {
         return adhan.CalculationMethod.kuwait();
       case CalcMethod.northAmerica:
         return adhan.CalculationMethod.northAmerica();
-      case CalcMethod.turkiye:
-        return adhan.CalculationMethod.turkiye();
+      case CalcMethod.moonsightingCommittee:
+        return adhan.CalculationMethod.moonsightingCommittee();
     }
   }
 }

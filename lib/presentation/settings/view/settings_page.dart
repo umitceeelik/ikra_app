@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../domain/entities/app_settings.dart';
+import '../../../domain/entities/prayer_settings.dart';
 import '../../settings/bloc/theme_cubit.dart';
 
 /// Simple Settings page:
@@ -15,6 +16,7 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final cubit = context.read<ThemeCubit>();
     final state = context.watch<ThemeCubit>().state;
+    final themeCubit = context.read<ThemeCubit>();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Ayarlar')),

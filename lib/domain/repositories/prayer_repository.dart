@@ -9,6 +9,9 @@ abstract class PrayerRepository {
   /// Ensure we have a location (permission + fetch). Returns updated settings.
   Future<PrayerSettings> ensureLocation(PrayerSettings current);
 
-  /// Compute prayer times for [date] using stored settings.
+  /// Compute prayer times for [date] using settings currently stored in Hive.
   Future<PrayerDayTimes> computeTimesFor(DateTime date);
+
+  /// NEW: Compute using the provided in-memory [settings] (no extra Hive read).
+  Future<PrayerDayTimes> computeTimesForWith(PrayerSettings settings, DateTime date);
 }

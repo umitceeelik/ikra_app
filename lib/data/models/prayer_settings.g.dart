@@ -20,13 +20,14 @@ class PrayerSettingsHiveAdapter extends TypeAdapter<PrayerSettingsHive> {
       ..latitude = fields[0] as double?
       ..longitude = fields[1] as double?
       ..methodIndex = fields[2] as int
-      ..madhabIndex = fields[3] as int;
+      ..madhabIndex = fields[3] as int
+      ..sourceIndex = fields[4] as int?;
   }
 
   @override
   void write(BinaryWriter writer, PrayerSettingsHive obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.latitude)
       ..writeByte(1)
@@ -34,7 +35,9 @@ class PrayerSettingsHiveAdapter extends TypeAdapter<PrayerSettingsHive> {
       ..writeByte(2)
       ..write(obj.methodIndex)
       ..writeByte(3)
-      ..write(obj.madhabIndex);
+      ..write(obj.madhabIndex)
+      ..writeByte(4)
+      ..write(obj.sourceIndex);
   }
 
   @override

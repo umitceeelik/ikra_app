@@ -16,3 +16,9 @@ final class PrayerSettingsChanged extends PrayerEvent {
   final Madhab madhab;
   PrayerSettingsChanged(this.method, this.madhab);
 }
+
+/// Change data source (local / diyanet).
+final class PrayerSourceChanged extends PrayerEvent {
+  final PrayerSource source;
+  PrayerSourceChanged(this.source);
+}
